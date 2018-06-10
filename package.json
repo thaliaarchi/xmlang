@@ -1,0 +1,29 @@
+{
+  "name": "xmlang",
+  "version": "1.0.0",
+  "description": "A functional programming language with XML syntax",
+  "author": "Andrew Archibald",
+  "main": "index.js",
+  "dependencies": {
+    "jsx-transform": "^2.4.0",
+    "typescript": "^2.9.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "tsc index.ts && node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewarchi/xmlang.git"
+  },
+  "keywords": [
+    "xml",
+    "jsx",
+    "functional"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrewarchi/xmlang/issues"
+  },
+  "homepage": "https://github.com/andrewarchi/xmlang#readme"
+}
