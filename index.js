@@ -1,20 +1,22 @@
 const convert = require('xml-js');
 const fs = require('fs');
 
-const reduce = func => args => args.reduce(func);
-const map =    func => args => args.map(func);
-const every =  func => args => args.every(func);
+const reduce = func => (...args) => args.reduce(func);
+const map =    func => (...args) => args.map(func);
+const every =  func => (...args) => args.every(func);
 
 const operators = {
-  add: reduce((a, b) => a + b),
-  sub: reduce((a, b) => a - b),
-  mul: reduce((a, b) => a * b),
-  div: reduce((a, b) => a / b),
-  mod: reduce((a, b) => a % b),
-  exp: reduce((a, b) => Math.pow(a, b)),
-  num: map(a => +a),
-  neg: args => args.length > 1 ? args.map(a => -a) : -args[0],
-  abs: map(a => Math.abs(a)),
+  // Arithmetic https://www.gnu.org/software/emacs/manual/html_node/elisp/Arithmetic-Operations.html
+  add: (...numbers) => numbers.reduce((a, b) => a + b, 0),
+  sub: (...numbers) => numbers.length ? (numbers.length === 1 ? -numbers[0] : numbers.reduce((a, b) => a - b)) : 0,
+  mul: (...numbers) => numbers.length ? numbers.reduce((a, b) => a * b) : 1,
+  div: (number, ...divisors) => divisors.length ? divisors.reduce((dividend, divisor) => dividend / divisor, number) : 1 / number,
+  rem: (dividend, divisor) => dividend % divisor,
+  mod: (dividend, divisor) => ((dividend % divisor) + divisor) % divisor,
+
+  abs: (...numbers) => numbers.map(number => Math.abs(number)),
+  neg: (...numbers) => numbers.length > 1 ? numbers.map(a => -a) : -numbers[0],
+  expt: (base, exp) => Math.pow(base, exp),
 
   eq:  every((a, i, arr) => a == arr[0]),
   neq: every((a, i, arr) => a != arr[0]),
@@ -28,18 +30,33 @@ const operators = {
   or:  reduce((a, b) => a || b)
 };
 
+const keywords = {
+  true: true,
+  false: false,
+  undef: undefined,
+  null: null,
+  Inf: Infinity,
+  NaN: NaN
+};
+
 const ast = parseAST(parseXML(readFile('pi.xml')));
 console.log(JSON.stringify(ast, null, 2));
 console.log(evaluate(ast).pop());
+
+let tests = require('./tests');
+tests.forEach(test => test.actual = evaluate(test.ast).pop());
+tests = tests.filter(test => test.out !== test.actual);
+console.log(JSON.stringify(tests, null, 2));
 
 function evaluate(ast) {
   return ast.map(node => {
     switch (node.type) {
       case 'expression':
-        return operators[node.name](evaluate(node.nodes));
+        return operators[node.name](...evaluate(node.nodes));
       case 'string':
       case 'number':
       case 'identifier':
+      default:
         return node.value;
     }
   })
@@ -115,7 +132,7 @@ function parseText(text, values) {
     if (!numberMatch) {
       throw 'Invalid number: ' + text;
     }
-    // Implement units
+    // Implement units and integer/float typing
     return parseText(text.slice(numberMatch[0].length), [...values, {
       type: 'number',
       value: +numberMatch[1]
