@@ -6,12 +6,9 @@ XMLang is a functional language with XML syntax interpreted using JSX.
 
 ## Assignment
 
-| Op      | JS         | Description         |
-|---------|------------|---------------------|
-| `func`  | `function` | Function            |
-| `def`   | `let`      | Definition          |
-| `const` | `const`    | Constant definition |
-| TBD     | `=`        | Assignment          |
+| Op     | JS         | Description         |
+|--------|------------|---------------------|
+| `func` | `function` | Function            |
 
 ## Arithmetic
 

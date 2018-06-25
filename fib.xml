@@ -1,14 +1,14 @@
 <program>
-    <func name="Fib" args="n">
+    <func name="fib" args="n">
         <if>
-            <lt>n{2}</lt>
+            <lt>n 2</lt>
             n
             <add>
-            <Fib><sub>n{1}</sub></Fib>
-            <Fib><sub>n{2}</sub></Fib>
+              <fib><sub>n 1</sub></fib>
+              <fib><sub>n 2</sub></fib>
             </add>
         </if>
     </func>
 
-    <Fib>5</Fib>
+    <fib>5</fib>
 </program>
