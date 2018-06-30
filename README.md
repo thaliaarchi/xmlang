@@ -1,6 +1,6 @@
 # XMLang
 
-XMLang is a functional language with XML syntax interpreted using JSX.
+XMLang is a functional language with XML syntax.
 
 # Operators
 
@@ -21,7 +21,7 @@ XMLang is a functional language with XML syntax interpreted using JSX.
 | `mul`  | `*`  | Multiplication |
 | `div`  | `/`  | Division       |
 | `mod`  | `%`  | Modulo         |
-| `exp`  | `**` | Exponentiation |
+| `expt` | `**` | Exponentiation |
 | `root` |      | Root           |
 
 **Unary operators:**

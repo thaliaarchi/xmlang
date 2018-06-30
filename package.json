@@ -3,13 +3,19 @@
   "version": "2.0.0",
   "description": "A functional programming language with XML syntax",
   "author": "Andrew Archibald",
-  "main": "index.js",
+  "main": "build/index.js",
   "dependencies": {
     "xml-js": "^1.6.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  },
   "scripts": {
-    "start": "node index.js"
+    "start": "node build/index.js",
+    "build": "babel src --out-dir build",
+    "watch": "babel src --out-dir build --watch"
   },
   "repository": {
     "type": "git",

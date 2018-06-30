@@ -1,34 +1,7 @@
-const convert = require('xml-js');
-const fs = require('fs');
-
-const reduce = func => (...args) => args.reduce(func);
-const map =    func => (...args) => args.map(func);
-const every =  func => (...args) => args.every(func);
-
-const operators = {
-  // Arithmetic https://www.gnu.org/software/emacs/manual/html_node/elisp/Arithmetic-Operations.html
-  add: (...numbers) => numbers.reduce((a, b) => a + b, 0),
-  sub: (...numbers) => numbers.length ? (numbers.length === 1 ? -numbers[0] : numbers.reduce((a, b) => a - b)) : 0,
-  mul: (...numbers) => numbers.length ? numbers.reduce((a, b) => a * b) : 1,
-  div: (number, ...divisors) => divisors.length ? divisors.reduce((dividend, divisor) => dividend / divisor, number) : 1 / number,
-  rem: (dividend, divisor) => dividend % divisor,
-  mod: (dividend, divisor) => ((dividend % divisor) + divisor) % divisor,
-
-  abs: (...numbers) => numbers.map(number => Math.abs(number)),
-  neg: (...numbers) => numbers.length > 1 ? numbers.map(a => -a) : -numbers[0],
-  expt: (base, exp) => Math.pow(base, exp),
-
-  eq:  every((a, i, arr) => a == arr[0]),
-  neq: every((a, i, arr) => a != arr[0]),
-  gt:  every((a, i, arr) => a > arr[0]),
-  lt:  every((a, i, arr) => a < arr[0]),
-  gte: every((a, i, arr) => a >= arr[0]),
-  lte: every((a, i, arr) => a <= arr[0]),
-
-  not: map(a => !a),
-  and: reduce((a, b) => a && b),
-  or:  reduce((a, b) => a || b)
-};
+import { xml2js } from 'xml-js';
+import { readFileSync } from 'fs';
+import operators from './operators';
+import tests from './tests';
 
 const keywords = {
   true: true,
@@ -39,14 +12,23 @@ const keywords = {
   NaN: NaN
 };
 
-const ast = parseAST(parseXML(readFile('pi.xml')));
+const ast = parseAST(parseXML(readFile('example/pi.xml')));
 console.log(JSON.stringify(ast, null, 2));
 console.log(evaluate(ast).pop());
 
-let tests = require('./tests');
-tests.forEach(test => test.actual = evaluate(test.ast).pop());
-tests = tests.filter(test => test.out !== test.actual);
-console.log(JSON.stringify(tests, null, 2));
+const testResults = tests.map(test => {
+  const ast = [{
+    type: 'expression',
+    name: test.func,
+    nodes: test.args.map(arg => ({
+      type: 'number',
+      value: arg
+    }))
+  }];
+  const actual = evaluate(ast)[0];
+  return { ...test, actual };
+}).filter(test => test.expected !== test.actual);
+console.log(JSON.stringify(testResults, null, 2));
 
 function evaluate(ast) {
   return ast.map(node => {
@@ -63,11 +45,11 @@ function evaluate(ast) {
 }
 
 function readFile(file) {
-  return fs.readFileSync(file, 'utf8');
+  return readFileSync(file, 'utf8');
 }
 
 function parseXML(xml) {
-  return convert.xml2js(xml, {
+  return xml2js(xml, {
     compact: false,
     trim: true,
     ignoreComment: true,
