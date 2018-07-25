@@ -92,3 +92,7 @@ Each, map
 | Func    | JS            | Description |
 |---------|---------------|-------------|
 | `print` | `console.log` | Print       |
+
+# Credit
+
+Credit to [Robert Prehn's article at Revelry](https://revelry.co/using-jsx-with-other-frameworks-than-react/) for the idea of this language.
